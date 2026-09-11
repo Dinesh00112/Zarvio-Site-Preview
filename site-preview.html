@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zarvio Site Preview</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --navy:#03102B; --navy-2:#0E2B65; --blue:#2F60F8; --purple:#7339FE;
+    --gradient: linear-gradient(135deg,#2F60F8 0%,#7339FE 100%);
+    --white:#FFFFFF; --surface:#F1F5F9; --text:#0F172A; --text-muted:#475569; --text-faint:#94A3B8;
+    --border:#E2E8F0; --radius:22px;
+    --shadow: 0 1px 2px rgba(15,23,42,.04), 0 12px 32px -16px rgba(15,23,42,.18);
+    --font-display:'Sora','Segoe UI Semibold',system-ui,sans-serif;
+    --font-body:'Inter',system-ui,sans-serif;
+    --ease-fluid: cubic-bezier(.22,1,.36,1);
+    --ease-spring: cubic-bezier(.34,1.56,.64,1);
+    --glass-blur: blur(26px) saturate(180%);
+    --glass-bg: rgba(255,255,255,.55);
+    --glass-bg-strong: rgba(255,255,255,.72);
+    --glass-border: rgba(255,255,255,.65);
+    --liquid-sheen: radial-gradient(65% 140% at 10% 0%, rgba(255,255,255,.6), transparent 55%), radial-gradient(55% 120% at 94% 0%, rgba(255,255,255,.25), transparent 55%);
+    --hero-logo-w: 420px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0; padding:0; width:100%;}
+  html{scroll-behavior:smooth; overflow-x:hidden;}
+  body{color:var(--text); font-family:var(--font-body); line-height:1.6; -webkit-font-smoothing:antialiased; background:var(--white); position:relative;}
+
+  /* ---- single global background layer ---- */
+  .site-bg{position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none;}
+  .site-bg::before{
+    content:"";
+    position:absolute; inset:-15%;
+    background:
+      radial-gradient(1000px circle at 12% 8%, rgba(47,96,248,.13), transparent 45%),
+      radial-gradient(900px circle at 88% 6%, rgba(115,57,254,.12), transparent 45%),
+      radial-gradient(1100px circle at 50% 30%, rgba(47,96,248,.06), transparent 50%),
+      radial-gradient(1000px circle at 20% 90%, rgba(115,57,254,.09), transparent 48%),
+      radial-gradient(1000px circle at 85% 95%, rgba(47,96,248,.08), transparent 46%);
+    animation:bg-drift 42s ease-in-out infinite alternate;
+  }
+  .site-bg::after{
+    content:"";
+    position:absolute; inset:-15%;
+    opacity:0;
+    transition:opacity .5s var(--ease-fluid);
+    background:
+      radial-gradient(900px circle at 12% 4%, rgba(47,96,248,.15), transparent 42%),
+      radial-gradient(800px circle at 88% 8%, rgba(115,57,254,.14), transparent 42%),
+      radial-gradient(900px circle at 45% 22%, rgba(47,96,248,.08), transparent 46%),
+      radial-gradient(850px circle at 15% 42%, rgba(115,57,254,.11), transparent 44%),
+      radial-gradient(900px circle at 85% 40%, rgba(47,96,248,.1), transparent 44%),
+      radial-gradient(850px circle at 20% 62%, rgba(47,96,248,.1), transparent 44%),
+      radial-gradient(900px circle at 82% 65%, rgba(115,57,254,.11), transparent 44%),
+      radial-gradient(850px circle at 30% 85%, rgba(115,57,254,.12), transparent 44%),
+      radial-gradient(900px circle at 78% 92%, rgba(47,96,248,.12), transparent 44%);
+    animation:bg-drift 46s ease-in-out infinite alternate;
+  }
+  .site-bg.home::after{opacity:1;}
+  @keyframes bg-drift{
+    0%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(-2.5%,2%) scale(1.05);}
+    100%{transform:translate(2%,-1.5%) scale(1.03);}
+  }
+
+  .page{position:relative; isolation:isolate;}
+  h1,h2,h3{font-family:var(--font-display); color:var(--text); margin:0; text-wrap:balance;}
+  p{margin:0;}
+  a{color:var(--blue); text-decoration:none; cursor:pointer;}
+  a:hover{color:var(--purple);}
+  button{font:inherit; cursor:pointer;}
+
+  /* ---- nav ---- */
+  .site-nav{position:sticky; isolation:isolate; display:flex; align-items:center; justify-content:space-between; margin:14px 20px 0; padding:12px 26px; border-radius:24px; border:1px solid rgba(255,255,255,.5); background:transparent; backdrop-filter:blur(5px) saturate(180%); -webkit-backdrop-filter:blur(5px) saturate(180%); box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 12px 32px -16px rgba(15,23,42,.2); top:14px; z-index:40;}
+  .site-nav::before{content:""; position:absolute; inset:0; z-index:-1; border-radius:inherit; background:var(--liquid-sheen); pointer-events:none;}
+  .brand{display:flex; align-items:center; min-width:0;}
+  .brand-logo{height:28px; width:auto; max-width:100%; display:block;}
+  .nav-links{display:flex; align-items:center; gap:30px;}
+  .nav-toggle{display:none; align-items:center; justify-content:center; width:38px; height:38px; border-radius:10px; border:1px solid var(--glass-border); background:var(--glass-bg); flex-shrink:0; padding:0;}
+  .nav-toggle span{display:block; width:16px; height:2px; background:var(--navy); position:relative; transition:background .2s ease;}
+  .nav-toggle span::before, .nav-toggle span::after{content:""; position:absolute; left:0; width:16px; height:2px; background:var(--navy); transition:transform .25s var(--ease-fluid);}
+  .nav-toggle span::before{top:-5px;}
+  .nav-toggle span::after{top:5px;}
+  .site-nav.nav-open .nav-toggle span{background:transparent;}
+  .site-nav.nav-open .nav-toggle span::before{transform:translateY(5px) rotate(45deg);}
+  .site-nav.nav-open .nav-toggle span::after{transform:translateY(-5px) rotate(-45deg);}
+  .nav-links a:not(.btn){font-size:14.5px; color:var(--text-muted); font-weight:500; position:relative; transition:color .2s ease;}
+  .nav-links a:not(.btn)::after{content:""; position:absolute; left:0; right:100%; bottom:-6px; height:2px; background:var(--gradient); transition:right .25s cubic-bezier(.16,.84,.44,1);}
+  .nav-links a:not(.btn):hover{color:var(--navy);}
+  .nav-links a:not(.btn):hover::after, .nav-links a.active:not(.btn)::after{right:0;}
+  .nav-links a.active:not(.btn){color:var(--navy); font-weight:600;}
+  .btn{position:relative; isolation:isolate; font-family:var(--font-body); font-weight:600; font-size:14.5px; padding:13px 26px; border-radius:999px; border:1px solid transparent; display:inline-flex; align-items:center; gap:8px; background:none; transition:transform .5s var(--ease-spring), box-shadow .4s var(--ease-fluid), border-color .3s var(--ease-fluid), color .3s var(--ease-fluid), text-shadow .3s var(--ease-fluid);}
+  .btn::before{content:""; position:absolute; inset:0; z-index:-1; border-radius:inherit; background:var(--liquid-sheen); pointer-events:none;}
+  .btn-primary, .nav-links a.btn-primary{color:#fff; background:var(--gradient); box-shadow:inset 0 1px 0 rgba(255,255,255,.45), inset 0 -3px 6px rgba(0,0,0,.15);}
+  .btn-primary:hover, .nav-links a.btn-primary:hover{color:#fff; transform:translateY(-2px) scale(1.03); box-shadow:inset 0 1px 0 rgba(255,255,255,.55), inset 0 -3px 6px rgba(0,0,0,.15), 0 16px 30px -14px rgba(15,23,42,.4); text-shadow:0 0 14px rgba(255,255,255,.9), 0 0 30px rgba(255,255,255,.5);}
+  .btn-secondary{background:var(--glass-bg); backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur); color:var(--navy); border-color:var(--glass-border); box-shadow:inset 0 1px 0 rgba(255,255,255,.9);}
+  .btn-secondary:hover{transform:translateY(-2px) scale(1.03); border-color:var(--blue); color:var(--blue); text-shadow:0 0 12px rgba(47,96,248,.35); box-shadow:inset 0 1px 0 rgba(255,255,255,.95), 0 12px 22px -14px rgba(47,96,248,.3);}
+  .nav-cta{font-size:13.5px; padding:10px 20px;}
+
+  /* ---- generic sections ---- */
+  .section{padding:96px 48px; background:transparent;}
+  .section-head{max-width:640px; margin:0 auto 48px; text-align:center;}
+  .eyebrow{font-size:12.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--blue); font-weight:600;}
+  .section-head h2{font-size:34px; margin-top:10px;}
+  .section-head p{color:var(--text-muted); margin-top:14px; font-size:16px;}
+
+  .page-head{padding:88px 48px 56px; text-align:center; background:transparent;}
+  .page-head .eyebrow{display:flex; justify-content:center; gap:10px; align-items:center;}
+  .page-head h1{font-size:40px; margin-top:14px;}
+  .page-head p{color:var(--text-muted); margin-top:14px; max-width:560px; margin-left:auto; margin-right:auto; font-size:16px;}
+  .badge{font-size:11px; font-weight:700; letter-spacing:.04em; color:var(--purple); background:#F1EBFF; border-radius:999px; padding:3px 10px; box-shadow:0 0 0 1px rgba(115,57,254,.12), 0 0 14px rgba(115,57,254,.22);}
+
+  /* ---- cards ---- */
+  .card-grid{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:24px; max-width:1104px; margin:0 auto;}
+  .card{position:relative; isolation:isolate; background:transparent; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); border:1px solid var(--glass-border); border-radius:var(--radius); padding:28px; display:flex; flex-direction:column; gap:12px; box-shadow:inset 0 1px 0 rgba(255,255,255,.8), var(--shadow); transition:transform .5s var(--ease-spring), box-shadow .4s var(--ease-fluid), border-color .4s var(--ease-fluid), backdrop-filter .4s var(--ease-fluid), -webkit-backdrop-filter .4s var(--ease-fluid);}
+  .card::before{content:""; position:absolute; inset:0; z-index:-1; border-radius:inherit; background:var(--liquid-sheen); pointer-events:none;}
+  .card:hover{transform:translateY(-6px) scale(1.06); backdrop-filter:blur(25px) saturate(180%); -webkit-backdrop-filter:blur(25px) saturate(180%); box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 0 0 1px #C7D2FE, 0 26px 46px -24px rgba(15,23,42,.3); border-color:#C7D2FE;}
+  .card .icon{width:40px; height:40px; border-radius:11px; background:radial-gradient(circle at 32% 28%, #fff 0%, var(--surface) 70%); box-shadow:inset 0 1px 2px rgba(255,255,255,.9), inset 0 -3px 5px rgba(15,23,42,.06); display:flex; align-items:center; justify-content:center; transition:background .4s var(--ease-fluid), box-shadow .4s var(--ease-fluid);}
+  .card:hover .icon{background:radial-gradient(circle at 32% 26%, rgba(255,255,255,.6), var(--blue) 62%, var(--purple) 130%); box-shadow:inset 0 1px 2px rgba(255,255,255,.5), inset 0 -3px 6px rgba(0,0,0,.15);}
+  .card .icon svg{width:20px; height:20px; stroke:var(--blue); fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; transition:stroke .3s ease;}
+  .card:hover .icon svg{stroke:#fff;}
+  .card h3{font-size:17px;}
+  .card p{font-size:14px; color:var(--text-muted); flex-grow:1;}
+  .card .link{font-size:13.5px; color:var(--blue); font-weight:600;}
+
+  /* ---- hero / trust ---- */
+  .hero{position:fixed; top:0; left:0; width:100%; height:100vh; height:100dvh; z-index:-1; overflow:hidden; pointer-events:none;}
+  .hero-blob{position:absolute; z-index:-1; border-radius:58% 42% 63% 37% / 41% 44% 56% 59%; filter:blur(70px); opacity:.32; pointer-events:none; animation:blob-float 12s var(--ease-fluid) infinite, blob-morph 16s ease-in-out infinite;}
+  .hero-blob.b1{width:320px; height:320px; background:var(--blue); top:-90px; left:-70px;}
+  .hero-blob.b2{width:260px; height:260px; background:var(--purple); bottom:-110px; right:-50px; animation-delay:2.4s, 3s;}
+  @keyframes blob-float{0%,100%{transform:translate(0,0);} 50%{transform:translate(16px,-20px);}}
+  @keyframes blob-morph{0%,100%{border-radius:58% 42% 63% 37% / 41% 44% 56% 59%;} 50%{border-radius:37% 63% 41% 59% / 59% 37% 63% 44%;}}
+  @keyframes hero-in{from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:none;}}
+  @keyframes hero-logo-in{from{opacity:0; transform:translate(-50%,-50%) translateY(16px) scale(1);} to{opacity:1; transform:translate(-50%,-50%) scale(1);}}
+  /* -- hero logo: fixed layer behind everything, zooms slightly on scroll --
+     the entrance animation is applied via the .hero-anim-in class only; JS strips
+     that class once the animation ends, so it stops fighting the scroll-driven
+     inline transform that takes over afterward. */
+  .hero-logo{position:fixed; top:50%; left:50%; z-index:-1; width:var(--hero-logo-w,420px); max-width:80%; aspect-ratio:1536/1024; height:auto; transform:translate(-50%,-50%) scale(1); transition:transform .1s linear; pointer-events:none;}
+  .hero-logo.hero-anim-in{animation:hero-logo-in .7s cubic-bezier(.16,.84,.44,1) both;}
+
+  /* -- page-scroll: the ONE wrapper holding every home-page section (hero text
+     through footer). Its tint (0 to 0.20 white) and blur (0 to the same 26px used
+     by cards) both ramp up together via JS as the first section scrolls past, then
+     hold fixed at that max for the rest of the page — instead of each section
+     blurring independently. The fixed logo/background stay outside this wrapper. -- */
+  .page-scroll{position:relative; background-color:rgba(255,255,255,0); backdrop-filter:blur(0px) saturate(180%); -webkit-backdrop-filter:blur(0px) saturate(180%); transition:background-color .1s linear, backdrop-filter .1s linear, -webkit-backdrop-filter .1s linear;}
+
+  /* -- hero text: plain flow content, no background of its own ("no color") —
+     just sits in front of the fixed, zooming logo as the page scrolls past it -- */
+  .hero-text{position:relative; width:100%; min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:88px 48px; text-align:center;}
+  .hero-eyebrow{display:block; text-align:center; margin-bottom:18px; animation:hero-in .7s cubic-bezier(.16,.84,.44,1) both;}
+  .hero-sub{margin:calc(var(--hero-logo-w,420px) / 1.5 + 40px) auto 0; max-width:580px; color:var(--text-muted); font-size:17px; animation:hero-in .7s cubic-bezier(.16,.84,.44,1) .16s both;}
+  .hero-btn-row{display:flex; justify-content:center; flex-wrap:wrap; gap:14px; margin-top:32px; animation:hero-in .7s cubic-bezier(.16,.84,.44,1) .24s both;}
+  .trust{padding:28px 48px; display:flex; align-items:center; justify-content:center; gap:40px; flex-wrap:wrap; border-bottom:1px solid var(--border);}
+  .trust span{font-size:12.5px; font-weight:600; color:var(--text-faint); letter-spacing:.05em;}
+
+  /* ---- value grid ---- */
+  .value-grid{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:28px; max-width:1104px; margin:0 auto;}
+  .value-item{display:flex; gap:14px;}
+  .value-item .num{font-family:var(--font-display); font-weight:700; font-size:14px; color:var(--purple); padding-top:2px;}
+  .value-item h3{font-size:15.5px; margin-bottom:6px;}
+  .value-item p{font-size:13.6px; color:var(--text-muted);}
+
+  /* ---- portfolio teaser (home) ---- */
+  .portfolio-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; max-width:1104px; margin:0 auto;}
+  .portfolio-card{position:relative; isolation:isolate; border:1.5px dashed var(--border); border-radius:var(--radius); padding:32px 20px; text-align:center; color:var(--text-faint); background:transparent; backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur); transition:transform .5s var(--ease-spring), border-color .3s var(--ease-fluid), background .3s var(--ease-fluid);}
+  .portfolio-card::before{content:""; position:absolute; inset:0; z-index:-1; border-radius:inherit; background:var(--liquid-sheen); pointer-events:none;}
+  .portfolio-card:hover{transform:translateY(-5px) scale(1.06); border-color:var(--blue); background:var(--glass-bg-strong);}
+  .portfolio-card svg{width:26px; height:26px; stroke:var(--text-faint); fill:none; stroke-width:1.4; margin:0 auto 12px;}
+  .portfolio-card p{font-size:13px;}
+
+  /* ---- cta banner ---- */
+  .cta-banner{max-width:1104px; margin:0 auto; border-radius:32px; background:var(--navy); padding:64px 48px; text-align:center; position:relative; overflow:hidden; box-shadow:inset 0 1px 0 rgba(255,255,255,.14), 0 30px 60px -30px rgba(3,16,43,.6);}
+  .cta-banner::before{content:""; position:absolute; inset:0; background:var(--liquid-sheen), var(--gradient); opacity:.22; animation:cta-pulse 6s ease-in-out infinite;}
+  @keyframes cta-pulse{0%,100%{opacity:.22;} 50%{opacity:.34;}}
+  .cta-banner h2{color:#fff; font-size:30px; position:relative;}
+  .cta-banner p{color:#B9C4DE; margin-top:12px; position:relative; font-size:15.5px;}
+  .cta-banner .btn-row{display:flex; justify-content:center; margin-top:28px; position:relative;}
+
+  /* ---- footer ---- */
+  footer.site-foot{padding:56px 48px 32px; background:var(--navy); color:#B9C4DE;}
+  .foot-grid{display:grid; grid-template-columns:1.6fr 1fr 1fr 1fr; gap:32px; max-width:1104px; margin:0 auto;}
+  .foot-grid h4{font-size:12.5px; text-transform:uppercase; letter-spacing:.06em; color:#7D8CB0; margin-bottom:14px; font-weight:600;}
+  .foot-grid a,.foot-grid p{display:block; font-size:14px; color:#B9C4DE; margin-bottom:10px;}
+  .foot-brand{font-family:var(--font-display); font-weight:700; font-size:18px; color:#fff; margin-bottom:10px;}
+  .foot-tagline{font-size:13.5px; color:#8593B5; max-width:26ch;}
+  .foot-bottom{max-width:1104px; margin:36px auto 0; padding-top:20px; border-top:1px solid #1C2E52; font-size:12.5px; color:#7D8CB0; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;}
+
+  /* ---- product / service detail rows ---- */
+  .detail{max-width:1104px; margin:0 auto; display:flex; gap:48px; align-items:flex-start;}
+  .detail .icon-lg{width:56px; height:56px; border-radius:16px; background:radial-gradient(circle at 32% 28%, #fff 0%, var(--surface) 75%); border:1px solid var(--border); box-shadow:inset 0 1px 2px rgba(255,255,255,.9), inset 0 -3px 5px rgba(15,23,42,.05); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .detail .icon-lg svg{width:26px; height:26px; stroke:var(--blue); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round;}
+  .detail-body{flex:1;}
+  .detail-body h2{font-size:25px; margin-bottom:10px;}
+  .detail-body p.desc{color:var(--text-muted); font-size:15.5px; max-width:62ch; margin-bottom:22px;}
+  .feature-list{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 28px; margin:0 0 26px; max-width:640px; padding:0; list-style:none;}
+  .feature-list li{display:flex; gap:8px; align-items:flex-start; font-size:14px; color:var(--text);}
+  .feature-list li svg{width:16px; height:16px; stroke:var(--blue); fill:none; stroke-width:2; flex-shrink:0; margin-top:2px;}
+
+  /* ---- portfolio case grid ---- */
+  .case-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:22px; max-width:1104px; margin:0 auto;}
+  .case{position:relative; isolation:isolate; border:1.5px dashed var(--border); border-radius:var(--radius); padding:26px; background:transparent; backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur); transition:transform .5s var(--ease-spring), border-color .3s var(--ease-fluid), background .3s var(--ease-fluid);}
+  .case::before{content:""; position:absolute; inset:0; z-index:-1; border-radius:inherit; background:var(--liquid-sheen); pointer-events:none;}
+  .case:hover{transform:translateY(-5px) scale(1.06); border-color:var(--blue); background:var(--glass-bg-strong);}
+  .case-row{display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;}
+  .case-row span{font-size:11px; font-weight:700; color:var(--text-faint); text-transform:uppercase; letter-spacing:.04em;}
+  .case h3{font-size:16px; color:var(--text-faint); margin-bottom:14px;}
+  .case dl{margin:0; display:flex; flex-direction:column; gap:8px;}
+  .case dt{font-size:11px; font-weight:600; color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em;}
+  .case dd{margin:0 0 4px; font-size:13px; color:var(--text-faint); font-style:italic;}
+  .cta-strip{max-width:1104px; margin:56px auto 0; text-align:center; padding-top:40px; border-top:1px solid var(--border);}
+  .cta-strip p{color:var(--text-muted); font-size:16px; margin-bottom:20px;}
+
+  /* ---- about ---- */
+  .story{max-width:720px; margin:0 auto; text-align:center;}
+  .story p{color:var(--text-muted); font-size:17px; margin-top:18px;}
+  .placeholder-note{display:inline-block; margin-top:22px; font-size:12px; color:var(--purple); background:#F1EBFF; border-radius:999px; padding:5px 12px; font-weight:600;}
+  .stat-row{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; max-width:900px; margin:56px auto 0;}
+  .stat{position:relative; isolation:isolate; text-align:center; border:1px solid var(--glass-border); border-radius:var(--radius); padding:28px 16px; background:transparent; backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur); box-shadow:inset 0 1px 0 rgba(255,255,255,.6); transition:transform .5s var(--ease-spring), box-shadow .4s var(--ease-fluid), background .4s var(--ease-fluid);}
+  .stat::before{content:""; position:absolute; inset:0; z-index:-1; border-radius:inherit; background:var(--liquid-sheen); pointer-events:none;}
+  .stat:hover{transform:translateY(-5px) scale(1.06); background:var(--glass-bg-strong); box-shadow:inset 0 1px 0 rgba(255,255,255,.8), 0 20px 36px -20px rgba(15,23,42,.18);}
+  .stat .num{font-family:var(--font-display); font-weight:700; font-size:26px; color:var(--navy);}
+  .stat .label{font-size:13px; color:var(--text-muted); margin-top:6px;}
+  .team-wrap{max-width:1104px; margin:0 auto; text-align:center;}
+  .team-wrap .eyebrow{margin-bottom:12px; justify-content:center; display:flex;}
+  .team-wrap h2{font-size:28px; margin-bottom:36px;}
+  .team-grid{display:flex; justify-content:center; gap:24px; flex-wrap:wrap;}
+  .team-card{position:relative; isolation:isolate; width:220px; border:1px solid var(--glass-border); border-radius:var(--radius); padding:28px 20px; box-shadow:inset 0 1px 0 rgba(255,255,255,.8), var(--shadow); background:transparent; backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur); transition:transform .5s var(--ease-spring), box-shadow .4s var(--ease-fluid), background .4s var(--ease-fluid);}
+  .team-card::before{content:""; position:absolute; inset:0; z-index:-1; border-radius:inherit; background:var(--liquid-sheen); pointer-events:none;}
+  .team-card:hover{transform:translateY(-5px) scale(1.06); background:var(--glass-bg-strong); box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 22px 40px -22px rgba(15,23,42,.25);}
+  .avatar{width:64px; height:64px; border-radius:50%; background:radial-gradient(circle at 32% 26%, rgba(255,255,255,.5), transparent 45%), var(--gradient); box-shadow:inset 0 2px 4px rgba(255,255,255,.35), inset 0 -6px 10px rgba(0,0,0,.15), 0 10px 22px -12px rgba(115,57,254,.55); color:#fff; font-family:var(--font-display); font-weight:700; font-size:22px; display:flex; align-items:center; justify-content:center; margin:0 auto 14px;}
+  .team-card h3{font-size:15.5px;}
+  .team-card p{font-size:13px; color:var(--text-muted); margin-top:4px;}
+
+  /* ---- book-a-demo / contact layout ---- */
+  .layout{max-width:1040px; margin:0 auto; padding:72px 48px 96px; display:grid; grid-template-columns:1fr 1.2fr; gap:56px; align-items:start; background:transparent; backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur);}
+  .intro .eyebrow, .info .eyebrow{font-size:12.5px;}
+  .intro h1, .info h1{font-size:32px; margin-top:14px;}
+  .intro p, .info p.lead{color:var(--text-muted); margin-top:16px; font-size:15.5px;}
+  .next-box{position:relative; isolation:isolate; margin-top:32px; padding:20px; border-radius:var(--radius); background:transparent; backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur); border:1px solid var(--glass-border); box-shadow:inset 0 1px 0 rgba(255,255,255,.8);}
+  .next-box::before{content:""; position:absolute; inset:0; z-index:-1; border-radius:inherit; background:var(--liquid-sheen); pointer-events:none;}
+  .next-box h4{font-size:12.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-faint); margin-bottom:8px; font-weight:600;}
+  .next-box p{font-size:13.5px; color:var(--text-muted);}
+  .info-list{margin-top:32px; display:flex; flex-direction:column; gap:20px;}
+  .info-item{display:flex; gap:14px; align-items:flex-start; transition:transform .35s var(--ease-fluid);}
+  .info-item:hover{transform:translateX(3px);}
+  .info-item .ic{width:36px; height:36px; border-radius:10px; background:radial-gradient(circle at 32% 28%, #fff 0%, var(--surface) 75%); border:1px solid var(--border); box-shadow:inset 0 1px 2px rgba(255,255,255,.9); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .info-item .ic svg{width:17px; height:17px; stroke:var(--blue); fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round;}
+  .info-item h4{font-size:13px; text-transform:uppercase; letter-spacing:.03em; color:var(--text-faint); margin-bottom:4px; font-weight:600;}
+  .info-item p{font-size:14.5px; color:var(--text);}
+  .social-row{display:flex; gap:10px; margin-top:28px;}
+  .social-row a{width:36px; height:36px; border-radius:10px; background:radial-gradient(circle at 32% 28%, #fff 0%, var(--surface) 75%); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; transition:transform .35s var(--ease-fluid), box-shadow .35s var(--ease-fluid);}
+  .social-row a:hover{transform:translateY(-3px); box-shadow:0 12px 20px -12px rgba(47,96,248,.4);}
+  .social-row svg{width:16px; height:16px; stroke:var(--blue); fill:none; stroke-width:1.6;}
+  .form-card{position:relative; isolation:isolate; background:transparent; backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur); border-radius:26px; border:1px solid var(--glass-border); box-shadow:inset 0 1px 0 rgba(255,255,255,.8), var(--shadow); padding:36px;}
+  .form-card::before{content:""; position:absolute; inset:0; z-index:-1; border-radius:inherit; background:var(--liquid-sheen); pointer-events:none;}
+  .field{margin-bottom:18px;}
+  .field label{display:block; font-size:13px; font-weight:600; margin-bottom:7px; color:var(--text);}
+  .field input, .field select, .field textarea{width:100%; padding:12px 16px; border-radius:14px; border:1px solid var(--border); font-family:var(--font-body); font-size:14px; color:var(--text); background:rgba(255,255,255,.55); box-shadow:inset 0 1px 2px rgba(15,23,42,.04); transition:border-color .25s var(--ease-fluid), box-shadow .25s var(--ease-fluid), background .25s var(--ease-fluid);}
+  .field input:focus, .field select:focus, .field textarea:focus{outline:none; border-color:var(--blue); background:rgba(255,255,255,.85); box-shadow:inset 0 1px 2px rgba(15,23,42,.03), 0 0 0 3px rgba(47,96,248,.15);}
+  .field textarea{resize:vertical; min-height:90px;}
+  .row-2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .optional{color:var(--text-faint); font-weight:400;}
+
+  .page[hidden]{display:none;}
+
+  .reveal-init{opacity:0; transform:translateY(22px) scale(.98); transition:opacity .7s var(--ease-fluid), transform .7s var(--ease-fluid); transition-delay:calc(var(--reveal-i,0) * 70ms);}
+  .reveal-init.in-view{opacity:1; transform:none;}
+  .page-leave{opacity:0; transform:translateY(-6px); transition:opacity .25s var(--ease-fluid), transform .25s var(--ease-fluid);}
+  .page-enter{opacity:0; transform:translateY(8px);}
+  .page-enter-active{opacity:1; transform:none; transition:opacity .4s var(--ease-fluid), transform .4s var(--ease-fluid);}
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal-init{opacity:1; transform:none; transition:none;}
+    .page-leave, .page-enter-active{transition:none;}
+    .hero-blob{animation:none !important;}
+    .site-bg::before, .site-bg::after{animation:none !important;}
+    .cta-banner::before{animation:none !important;}
+    .hero-eyebrow, .hero-logo, .hero-sub, .hero-btn-row{animation:none !important;}
+  }
+
+  @media (max-width:760px){
+    .layout{grid-template-columns:1fr; padding:48px 24px 64px; gap:36px;}
+    .card-grid, .value-grid, .case-grid, .portfolio-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .detail{flex-direction:column; gap:24px;}
+    .feature-list{grid-template-columns:1fr;}
+    .foot-grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:28px 20px;}
+    .stat-row{grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px;}
+
+    .site-nav{margin:12px 12px 0; padding:10px 14px;}
+    .hero-text{padding:24px 24px;}
+    :root{--hero-logo-w:300px;}
+    .hero-sub{font-size:15.5px;}
+    .trust{padding:20px 24px; gap:18px;}
+    .section{padding:64px 24px;}
+    .section-head h2{font-size:27px;}
+    .page-head{padding:56px 24px 40px;}
+    .page-head h1{font-size:30px;}
+    .cta-banner{padding:44px 24px;}
+    .cta-banner h2{font-size:24px;}
+    footer.site-foot{padding:40px 24px 28px;}
+
+    .nav-toggle{display:flex;}
+    .nav-links{position:absolute; top:calc(100% + 10px); left:0; right:0; flex-direction:column; align-items:stretch; gap:4px; padding:14px; background:var(--glass-bg-strong); backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur); border:1px solid var(--glass-border); border-radius:18px; box-shadow:0 20px 40px -20px rgba(15,23,42,.35); opacity:0; visibility:hidden; transform:translateY(-8px); transition:opacity .25s var(--ease-fluid), transform .25s var(--ease-fluid), visibility .25s;}
+    .nav-links a:not(.btn){padding:10px 12px; font-size:15px;}
+    .nav-links a.nav-cta{justify-content:center; margin-top:6px;}
+    .site-nav.nav-open .nav-links{opacity:1; visibility:visible; transform:none;}
+  }
+
+  @media (max-width:480px){
+    .card-grid, .value-grid, .case-grid, .portfolio-grid, .foot-grid, .stat-row{grid-template-columns:1fr;}
+    .row-2{grid-template-columns:1fr;}
+    .team-card{width:100%; max-width:280px;}
+    .foot-bottom{justify-content:center; text-align:center;}
+    :root{--hero-logo-w:240px;}
+    .page-head h1{font-size:26px;}
+    .section-head h2{font-size:23px;}
+    .detail-body h2{font-size:21px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="site-bg home" aria-hidden="true"></div>
+
+<!-- ============ HOME ============ -->
+<section class="page" id="page-home">
+  <nav class="site-nav">
+    <div class="brand"><img src="zarvio-logo-top-menu-bar.png" alt="Zarvio" class="brand-logo"></div>
+    <div class="nav-links">
+      <a class="active" data-target="home">Home</a>
+      <a data-target="products">Products</a>
+      <a data-target="services">Services</a>
+      <a data-target="portfolio">Portfolio</a>
+      <a data-target="about">About</a>
+      <a data-target="contact">Contact</a>
+      <a class="btn btn-primary nav-cta" data-target="book-a-demo">Book a Demo</a>
+    </div>
+  </nav>
+
+  <section class="hero" aria-hidden="true">
+    <div class="hero-blob b1"></div>
+    <div class="hero-blob b2"></div>
+  </section>
+
+  <img src="zarvio-brand-logo.png" alt="Zarvio — Smarter Business. Stronger Future." class="hero-logo hero-anim-in" aria-hidden="true">
+
+  <div class="page-scroll">
+    <div class="hero-text">
+      <div class="eyebrow hero-eyebrow">Frappe · ERPNext · HRMS · CRM specialists</div>
+      <p class="hero-sub">Zarvio helps enterprises run better with ERPNext, HRMS, and CRM solutions — plus custom Frappe development and business consulting.</p>
+      <div class="hero-btn-row">
+        <a class="btn btn-primary" data-target="book-a-demo">Book a Demo</a>
+        <a class="btn btn-secondary" data-target="products">Explore Products</a>
+      </div>
+    </div>
+
+  <div class="trust">
+    <span>BUILT ON FRAPPE</span>
+    <span>ERPNEXT IMPLEMENTATION PARTNER</span>
+    <span>END-TO-END DELIVERY</span>
+    <span>ENTERPRISE-GRADE SUPPORT</span>
+  </div>
+
+  <section class="section">
+    <div class="section-head">
+      <div class="eyebrow">Products</div>
+      <h2>Enterprise solutions, built on Frappe</h2>
+      <p>Packaged ERP-ecosystem products, tailored to how your business actually runs.</p>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="7" ry="2.5"></ellipse><path d="M5 5v14c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5"></path><path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"></path></svg></div>
+        <h3>ERPNext Implementation</h3>
+        <p>Full ERP setup, module configuration, and migration from legacy systems.</p>
+        <a class="link" data-target="products">Learn more →</a>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3.5 20c0-3.3 2.5-6 5.5-6s5.5 2.7 5.5 6"></path><circle cx="17" cy="9" r="2.4"></circle><path d="M15.3 14c2.4.3 4.2 2.5 4.2 6"></path></svg></div>
+        <h3>HRMS</h3>
+        <p>Attendance, payroll, leave management, and employee self-service.</p>
+        <a class="link" data-target="products">Learn more →</a>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v10H9l-4 4V5z"></path></svg></div>
+        <h3>CRM</h3>
+        <p>Lead tracking, sales pipeline, and customer support workflows.</p>
+        <a class="link" data-target="products">Learn more →</a>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24"><path d="M8 6 3 12l5 6M16 6l5 6-5 6"></path></svg></div>
+        <h3>Custom Frappe Apps</h3>
+        <p>Bespoke DocTypes and forms for workflows off-the-shelf ERP doesn't cover.</p>
+        <a class="link" data-target="products">Learn more →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="section-head">
+      <div class="eyebrow">Services</div>
+      <h2>Beyond off-the-shelf software</h2>
+      <p>We design, build, and support solutions around your business.</p>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 3.5c2.5 2.2 3.8 5.3 3.8 8.5s-1.3 6.3-3.8 8.5c-2.5-2.2-3.8-5.3-3.8-8.5S9.5 5.7 12 3.5zM4 12h16"></path></svg></div>
+        <h3>Custom Website Development</h3>
+        <p>Marketing sites, portals, and internal tools.</p>
+        <a class="link" data-target="services">Learn more →</a>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M12 3v2.4M12 18.6V21M21 12h-2.4M5.4 12H3M18 6l-1.6 1.6M7.6 16.4 6 18M18 18l-1.6-1.6M7.6 7.6 6 6"></path></svg></div>
+        <h3>Custom Software Development</h3>
+        <p>Bespoke applications outside the Frappe ecosystem when needed.</p>
+        <a class="link" data-target="services">Learn more →</a>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="m15 9-2 5-4 1 2-5z"></path></svg></div>
+        <h3>Business Consulting</h3>
+        <p>Process audits, transformation roadmaps, and ERP readiness reviews.</p>
+        <a class="link" data-target="services">Learn more →</a>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.6M20 6v5.5h-5.5"></path></svg></div>
+        <h3>Implementation &amp; Support</h3>
+        <p>Ongoing maintenance, upgrades, and support contracts post-launch.</p>
+        <a class="link" data-target="services">Learn more →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div class="eyebrow">Why Zarvio</div>
+      <h2>Why teams choose Zarvio</h2>
+    </div>
+    <div class="value-grid">
+      <div class="value-item"><span class="num">01</span><div><h3>Frappe/ERPNext specialists</h3><p>Deep, focused expertise instead of generalist coverage.</p></div></div>
+      <div class="value-item"><span class="num">02</span><div><h3>End-to-end delivery</h3><p>From consulting through implementation and ongoing support.</p></div></div>
+      <div class="value-item"><span class="num">03</span><div><h3>Built around your workflow</h3><p>Solutions shaped to your process, not the other way around.</p></div></div>
+      <div class="value-item"><span class="num">04</span><div><h3>Enterprise-grade reliability</h3><p>Security and stability suited to business-critical systems.</p></div></div>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="section-head">
+      <div class="eyebrow">Portfolio</div>
+      <h2>Our work</h2>
+      <p>Case studies are on the way — here's where they'll live.</p>
+    </div>
+    <div class="portfolio-grid">
+      <div class="portfolio-card"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg><p>Case study coming soon</p></div>
+      <div class="portfolio-card"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg><p>Case study coming soon</p></div>
+      <div class="portfolio-card"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg><p>Case study coming soon</p></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:16px; padding-bottom:112px;">
+    <div class="cta-banner">
+      <h2>Ready to modernize your operations?</h2>
+      <p>Talk to us about ERPNext, HRMS, CRM, or a custom build.</p>
+      <div class="btn-row"><a class="btn btn-primary" data-target="book-a-demo">Book a Demo</a></div>
+    </div>
+  </section>
+
+  <footer class="site-foot">
+    <div class="foot-grid">
+      <div><div class="foot-brand">Zarvio</div><p class="foot-tagline">Smarter Business. Stronger Future.</p></div>
+      <div><h4>Quick Links</h4><a data-target="home">Home</a><a data-target="services">Services</a><a data-target="portfolio">Portfolio</a><a data-target="about">About</a><a data-target="book-a-demo">Book a Demo</a></div>
+      <div><h4>Products</h4><a data-target="products">ERPNext</a><a data-target="products">HRMS</a><a data-target="products">CRM</a><a data-target="products">Custom Frappe</a></div>
+      <div><h4>Contact</h4><p>hello@zarvio.com</p><p>+1 (415) 555-0148</p></div>
+    </div>
+    <div class="foot-bottom"><span>© 2026 Zarvio. All rights reserved.</span><span>Placeholder contact info — see 05-content-needed.md</span></div>
+  </footer>
+  </div>
+</section>
+
+<!-- ============ PRODUCTS ============ -->
+<section class="page" id="page-products" hidden>
+  <nav class="site-nav">
+    <div class="brand"><img src="zarvio-logo-top-menu-bar.png" alt="Zarvio" class="brand-logo"></div>
+    <div class="nav-links">
+      <a data-target="home">Home</a>
+      <a class="active" data-target="products">Products</a>
+      <a data-target="services">Services</a>
+      <a data-target="portfolio">Portfolio</a>
+      <a data-target="about">About</a>
+      <a data-target="contact">Contact</a>
+      <a class="btn btn-primary nav-cta" data-target="book-a-demo">Book a Demo</a>
+    </div>
+  </nav>
+
+  <header class="page-head">
+    <div class="eyebrow">Products</div>
+    <h1>Enterprise-grade solutions, built on Frappe</h1>
+    <p>Tailored to how your business actually runs — not the other way around.</p>
+  </header>
+
+  <section class="section">
+    <div class="detail">
+      <div class="icon-lg"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="7" ry="2.5"></ellipse><path d="M5 5v14c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5"></path><path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"></path></svg></div>
+      <div class="detail-body">
+        <h2>ERPNext Implementation &amp; Customization</h2>
+        <p class="desc">Full ERP setup, module configuration, and migration from legacy systems — configured around how your teams actually operate.</p>
+        <ul class="feature-list">
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>End-to-end ERPNext setup &amp; go-live</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Module configuration &amp; workflow mapping</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Legacy data migration</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Staff onboarding &amp; training</li>
+        </ul>
+        <a class="btn btn-primary" data-target="book-a-demo">Book a Demo</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="detail">
+      <div class="icon-lg"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3.5 20c0-3.3 2.5-6 5.5-6s5.5 2.7 5.5 6"></path><circle cx="17" cy="9" r="2.4"></circle><path d="M15.3 14c2.4.3 4.2 2.5 4.2 6"></path></svg></div>
+      <div class="detail-body">
+        <h2>HRMS — HR Management System</h2>
+        <p class="desc">Attendance, payroll, leave management, and employee self-service in one connected system.</p>
+        <ul class="feature-list">
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Attendance &amp; shift tracking</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Payroll processing</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Leave &amp; approval workflows</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Employee self-service portal</li>
+        </ul>
+        <a class="btn btn-primary" data-target="book-a-demo">Book a Demo</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="detail">
+      <div class="icon-lg"><svg viewBox="0 0 24 24"><path d="M4 5h16v10H9l-4 4V5z"></path></svg></div>
+      <div class="detail-body">
+        <h2>CRM — Customer Relationship Management</h2>
+        <p class="desc">Lead tracking, sales pipeline, and customer support workflows built to keep deals moving.</p>
+        <ul class="feature-list">
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Lead &amp; contact tracking</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Sales pipeline management</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Customer support workflows</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Reporting &amp; forecasting</li>
+        </ul>
+        <a class="btn btn-primary" data-target="book-a-demo">Book a Demo</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="detail">
+      <div class="icon-lg"><svg viewBox="0 0 24 24"><path d="M8 6 3 12l5 6M16 6l5 6-5 6"></path></svg></div>
+      <div class="detail-body">
+        <h2>Custom Frappe Apps, DocTypes &amp; Forms</h2>
+        <p class="desc">Bespoke modules and forms built on Frappe for workflows off-the-shelf ERPNext doesn't cover out of the box.</p>
+        <ul class="feature-list">
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Custom DocTypes &amp; forms</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Workflow &amp; approval automation</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Third-party integrations</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Ongoing app maintenance</li>
+        </ul>
+        <a class="btn btn-primary" data-target="book-a-demo">Book a Demo</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-foot">
+    <div class="foot-grid">
+      <div><div class="foot-brand">Zarvio</div><p class="foot-tagline">Smarter Business. Stronger Future.</p></div>
+      <div><h4>Quick Links</h4><a data-target="home">Home</a><a data-target="services">Services</a><a data-target="portfolio">Portfolio</a><a data-target="about">About</a><a data-target="book-a-demo">Book a Demo</a></div>
+      <div><h4>Products</h4><a data-target="products">ERPNext</a><a data-target="products">HRMS</a><a data-target="products">CRM</a><a data-target="products">Custom Frappe</a></div>
+      <div><h4>Contact</h4><p>hello@zarvio.com</p><p>+1 (415) 555-0148</p></div>
+    </div>
+    <div class="foot-bottom"><span>© 2026 Zarvio. All rights reserved.</span><span>Placeholder contact info — see 05-content-needed.md</span></div>
+  </footer>
+</section>
+
+<!-- ============ SERVICES ============ -->
+<section class="page" id="page-services" hidden>
+  <nav class="site-nav">
+    <div class="brand"><img src="zarvio-logo-top-menu-bar.png" alt="Zarvio" class="brand-logo"></div>
+    <div class="nav-links">
+      <a data-target="home">Home</a>
+      <a data-target="products">Products</a>
+      <a class="active" data-target="services">Services</a>
+      <a data-target="portfolio">Portfolio</a>
+      <a data-target="about">About</a>
+      <a data-target="contact">Contact</a>
+      <a class="btn btn-primary nav-cta" data-target="book-a-demo">Book a Demo</a>
+    </div>
+  </nav>
+
+  <header class="page-head">
+    <div class="eyebrow">Services</div>
+    <h1>Beyond off-the-shelf software</h1>
+    <p>We design, build, and support solutions around your business.</p>
+  </header>
+
+  <section class="section">
+    <div class="detail">
+      <div class="icon-lg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 3.5c2.5 2.2 3.8 5.3 3.8 8.5s-1.3 6.3-3.8 8.5c-2.5-2.2-3.8-5.3-3.8-8.5S9.5 5.7 12 3.5zM4 12h16"></path></svg></div>
+      <div class="detail-body">
+        <h2>Custom Website Development</h2>
+        <p class="desc">Marketing sites, portals, and internal tools — built to fit how your business presents itself and operates.</p>
+        <ul class="feature-list">
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Marketing &amp; brand websites</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Client &amp; partner portals</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Internal tools &amp; dashboards</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Ongoing maintenance</li>
+        </ul>
+        <a class="btn btn-primary" data-target="book-a-demo">Book a Demo</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="detail">
+      <div class="icon-lg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M12 3v2.4M12 18.6V21M21 12h-2.4M5.4 12H3M18 6l-1.6 1.6M7.6 16.4 6 18M18 18l-1.6-1.6M7.6 7.6 6 6"></path></svg></div>
+      <div class="detail-body">
+        <h2>Custom Software Development</h2>
+        <p class="desc">Bespoke applications outside the Frappe ecosystem when your requirements call for it.</p>
+        <ul class="feature-list">
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Requirements &amp; systems design</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Custom application builds</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>API &amp; systems integration</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>QA &amp; deployment</li>
+        </ul>
+        <a class="btn btn-primary" data-target="book-a-demo">Book a Demo</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="detail">
+      <div class="icon-lg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="m15 9-2 5-4 1 2-5z"></path></svg></div>
+      <div class="detail-body">
+        <h2>Business Consulting</h2>
+        <p class="desc">Process audits, digital transformation roadmaps, and ERP readiness assessments before you commit to a build.</p>
+        <ul class="feature-list">
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Process &amp; workflow audits</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Digital transformation roadmaps</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>ERP readiness assessments</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Vendor &amp; tooling recommendations</li>
+        </ul>
+        <a class="btn btn-primary" data-target="book-a-demo">Book a Demo</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="detail">
+      <div class="icon-lg"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.6M20 6v5.5h-5.5"></path></svg></div>
+      <div class="detail-body">
+        <h2>Implementation &amp; Support</h2>
+        <p class="desc">Ongoing maintenance, upgrades, and support contracts once you're live — so the system keeps working as your business changes.</p>
+        <ul class="feature-list">
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Post-launch support contracts</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Version upgrades &amp; patching</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Monitoring &amp; incident response</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"></path></svg>Training for new staff</li>
+        </ul>
+        <a class="btn btn-primary" data-target="book-a-demo">Book a Demo</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-foot">
+    <div class="foot-grid">
+      <div><div class="foot-brand">Zarvio</div><p class="foot-tagline">Smarter Business. Stronger Future.</p></div>
+      <div><h4>Quick Links</h4><a data-target="home">Home</a><a data-target="services">Services</a><a data-target="portfolio">Portfolio</a><a data-target="about">About</a><a data-target="book-a-demo">Book a Demo</a></div>
+      <div><h4>Products</h4><a data-target="products">ERPNext</a><a data-target="products">HRMS</a><a data-target="products">CRM</a><a data-target="products">Custom Frappe</a></div>
+      <div><h4>Contact</h4><p>hello@zarvio.com</p><p>+1 (415) 555-0148</p></div>
+    </div>
+    <div class="foot-bottom"><span>© 2026 Zarvio. All rights reserved.</span><span>Placeholder contact info — see 05-content-needed.md</span></div>
+  </footer>
+</section>
+
+<!-- ============ PORTFOLIO ============ -->
+<section class="page" id="page-portfolio" hidden>
+  <nav class="site-nav">
+    <div class="brand"><img src="zarvio-logo-top-menu-bar.png" alt="Zarvio" class="brand-logo"></div>
+    <div class="nav-links">
+      <a data-target="home">Home</a>
+      <a data-target="products">Products</a>
+      <a data-target="services">Services</a>
+      <a class="active" data-target="portfolio">Portfolio</a>
+      <a data-target="about">About</a>
+      <a data-target="contact">Contact</a>
+      <a class="btn btn-primary nav-cta" data-target="book-a-demo">Book a Demo</a>
+    </div>
+  </nav>
+
+  <header class="page-head">
+    <div class="eyebrow">Our Work <span class="badge">COMING SOON</span></div>
+    <h1>Real projects, on the way</h1>
+    <p>We're just getting started documenting client work. Here's where those case studies will live.</p>
+  </header>
+
+  <section class="section" style="padding-bottom:88px;">
+    <div class="case-grid">
+      <div class="case"><div class="case-row"><h3>Case Study</h3><span>Coming soon</span></div><dl><dt>Client / Industry</dt><dd>To be added</dd><dt>Challenge</dt><dd>To be added</dd><dt>Solution</dt><dd>To be added</dd><dt>Result</dt><dd>To be added</dd></dl></div>
+      <div class="case"><div class="case-row"><h3>Case Study</h3><span>Coming soon</span></div><dl><dt>Client / Industry</dt><dd>To be added</dd><dt>Challenge</dt><dd>To be added</dd><dt>Solution</dt><dd>To be added</dd><dt>Result</dt><dd>To be added</dd></dl></div>
+      <div class="case"><div class="case-row"><h3>Case Study</h3><span>Coming soon</span></div><dl><dt>Client / Industry</dt><dd>To be added</dd><dt>Challenge</dt><dd>To be added</dd><dt>Solution</dt><dd>To be added</dd><dt>Result</dt><dd>To be added</dd></dl></div>
+      <div class="case"><div class="case-row"><h3>Case Study</h3><span>Coming soon</span></div><dl><dt>Client / Industry</dt><dd>To be added</dd><dt>Challenge</dt><dd>To be added</dd><dt>Solution</dt><dd>To be added</dd><dt>Result</dt><dd>To be added</dd></dl></div>
+      <div class="case"><div class="case-row"><h3>Case Study</h3><span>Coming soon</span></div><dl><dt>Client / Industry</dt><dd>To be added</dd><dt>Challenge</dt><dd>To be added</dd><dt>Solution</dt><dd>To be added</dd><dt>Result</dt><dd>To be added</dd></dl></div>
+      <div class="case"><div class="case-row"><h3>Case Study</h3><span>Coming soon</span></div><dl><dt>Client / Industry</dt><dd>To be added</dd><dt>Challenge</dt><dd>To be added</dd><dt>Solution</dt><dd>To be added</dd><dt>Result</dt><dd>To be added</dd></dl></div>
+    </div>
+    <div class="cta-strip">
+      <p>Want to be our next success story?</p>
+      <a class="btn btn-primary" data-target="book-a-demo">Book a Demo</a>
+    </div>
+  </section>
+
+  <footer class="site-foot">
+    <div class="foot-grid">
+      <div><div class="foot-brand">Zarvio</div><p class="foot-tagline">Smarter Business. Stronger Future.</p></div>
+      <div><h4>Quick Links</h4><a data-target="home">Home</a><a data-target="services">Services</a><a data-target="portfolio">Portfolio</a><a data-target="about">About</a><a data-target="book-a-demo">Book a Demo</a></div>
+      <div><h4>Products</h4><a data-target="products">ERPNext</a><a data-target="products">HRMS</a><a data-target="products">CRM</a><a data-target="products">Custom Frappe</a></div>
+      <div><h4>Contact</h4><p>hello@zarvio.com</p><p>+1 (415) 555-0148</p></div>
+    </div>
+    <div class="foot-bottom"><span>© 2026 Zarvio. All rights reserved.</span><span>Placeholder contact info — see 05-content-needed.md</span></div>
+  </footer>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="page" id="page-about" hidden>
+  <nav class="site-nav">
+    <div class="brand"><img src="zarvio-logo-top-menu-bar.png" alt="Zarvio" class="brand-logo"></div>
+    <div class="nav-links">
+      <a data-target="home">Home</a>
+      <a data-target="products">Products</a>
+      <a data-target="services">Services</a>
+      <a data-target="portfolio">Portfolio</a>
+      <a class="active" data-target="about">About</a>
+      <a data-target="contact">Contact</a>
+      <a class="btn btn-primary nav-cta" data-target="book-a-demo">Book a Demo</a>
+    </div>
+  </nav>
+
+  <header class="page-head">
+    <div class="eyebrow">About Zarvio</div>
+    <h1>Smarter Business. Stronger Future.</h1>
+  </header>
+
+  <section class="section">
+    <div class="story">
+      <p>Zarvio was founded by a small team of Frappe and ERPNext specialists who kept watching enterprise teams get boxed in by rigid, one-size-fits-all software. We started Zarvio to do implementation differently — as an ongoing partnership, not a one-time handoff.</p>
+      <div class="placeholder-note">Placeholder story — replace with your real founding story</div>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><div class="num">[X]+</div><div class="label">ERPNext implementations delivered</div></div>
+      <div class="stat"><div class="num">[X]+</div><div class="label">Years building on Frappe</div></div>
+      <div class="stat"><div class="num">[X]+</div><div class="label">Industries served</div></div>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="team-wrap">
+      <div class="eyebrow">Team</div>
+      <h2>Who's behind Zarvio</h2>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="avatar">Z</div>
+          <h3>Founder &amp; CEO</h3>
+          <p>[Add name &amp; short bio]</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:56px; padding-bottom:112px;">
+    <div class="cta-banner">
+      <h2>Want to see it in action?</h2>
+      <div class="btn-row"><a class="btn btn-primary" data-target="book-a-demo">Book a Demo</a></div>
+    </div>
+  </section>
+
+  <footer class="site-foot">
+    <div class="foot-grid">
+      <div><div class="foot-brand">Zarvio</div><p class="foot-tagline">Smarter Business. Stronger Future.</p></div>
+      <div><h4>Quick Links</h4><a data-target="home">Home</a><a data-target="services">Services</a><a data-target="portfolio">Portfolio</a><a data-target="about">About</a><a data-target="book-a-demo">Book a Demo</a></div>
+      <div><h4>Products</h4><a data-target="products">ERPNext</a><a data-target="products">HRMS</a><a data-target="products">CRM</a><a data-target="products">Custom Frappe</a></div>
+      <div><h4>Contact</h4><p>hello@zarvio.com</p><p>+1 (415) 555-0148</p></div>
+    </div>
+    <div class="foot-bottom"><span>© 2026 Zarvio. All rights reserved.</span><span>Placeholder contact info — see 05-content-needed.md</span></div>
+  </footer>
+</section>
+
+<!-- ============ BOOK A DEMO ============ -->
+<section class="page" id="page-book-a-demo" hidden>
+  <nav class="site-nav">
+    <div class="brand"><img src="zarvio-logo-top-menu-bar.png" alt="Zarvio" class="brand-logo"></div>
+    <div class="nav-links">
+      <a data-target="home">Home</a>
+      <a data-target="products">Products</a>
+      <a data-target="services">Services</a>
+      <a data-target="portfolio">Portfolio</a>
+      <a data-target="about">About</a>
+      <a data-target="contact">Contact</a>
+      <a class="btn btn-primary nav-cta active" data-target="book-a-demo">Book a Demo</a>
+    </div>
+  </nav>
+
+  <div class="layout">
+    <div class="intro">
+      <div class="eyebrow">Book a Demo</div>
+      <h1>See how Zarvio fits your business</h1>
+      <p>No commitment, just a conversation. Tell us a bit about your team and we'll walk you through the right fit.</p>
+      <div class="next-box">
+        <h4>What happens next</h4>
+        <p>Our team will reach out within 1 business day to schedule a walkthrough.</p>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="row-2">
+        <div class="field"><label>Full Name</label><input type="text" placeholder="Jordan Smith"></div>
+        <div class="field"><label>Company Name</label><input type="text" placeholder="Acme Corp"></div>
+      </div>
+      <div class="row-2">
+        <div class="field"><label>Work Email</label><input type="email" placeholder="jordan@acmecorp.com"></div>
+        <div class="field"><label>Phone <span class="optional">(optional)</span></label><input type="tel" placeholder="+1 (555) 000-0000"></div>
+      </div>
+      <div class="field">
+        <label>Interested In</label>
+        <select><option>ERPNext</option><option>HRMS</option><option>CRM</option><option>Custom Development</option><option>Consulting</option><option>Not sure yet</option></select>
+      </div>
+      <div class="field">
+        <label>Message <span class="optional">(optional)</span></label>
+        <textarea placeholder="Tell us a bit about what you're looking for..."></textarea>
+      </div>
+      <button class="btn btn-primary" style="width:100%; justify-content:center;" type="button">Book a Demo</button>
+    </div>
+  </div>
+
+  <footer class="site-foot">
+    <div class="foot-grid">
+      <div><div class="foot-brand">Zarvio</div><p class="foot-tagline">Smarter Business. Stronger Future.</p></div>
+      <div><h4>Quick Links</h4><a data-target="home">Home</a><a data-target="services">Services</a><a data-target="portfolio">Portfolio</a><a data-target="about">About</a><a data-target="book-a-demo">Book a Demo</a></div>
+      <div><h4>Products</h4><a data-target="products">ERPNext</a><a data-target="products">HRMS</a><a data-target="products">CRM</a><a data-target="products">Custom Frappe</a></div>
+      <div><h4>Contact</h4><p>hello@zarvio.com</p><p>+1 (415) 555-0148</p></div>
+    </div>
+    <div class="foot-bottom"><span>© 2026 Zarvio. All rights reserved.</span><span>Placeholder contact info — see 05-content-needed.md</span></div>
+  </footer>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="page" id="page-contact" hidden>
+  <nav class="site-nav">
+    <div class="brand"><img src="zarvio-logo-top-menu-bar.png" alt="Zarvio" class="brand-logo"></div>
+    <div class="nav-links">
+      <a data-target="home">Home</a>
+      <a data-target="products">Products</a>
+      <a data-target="services">Services</a>
+      <a data-target="portfolio">Portfolio</a>
+      <a data-target="about">About</a>
+      <a class="active" data-target="contact">Contact</a>
+      <a class="btn btn-primary nav-cta" data-target="book-a-demo">Book a Demo</a>
+    </div>
+  </nav>
+
+  <div class="layout">
+    <div class="info">
+      <div class="eyebrow">Contact</div>
+      <h1>Get in touch</h1>
+      <p class="lead">General inquiries, support questions, or anything else — reach out and we'll get back to you.</p>
+
+      <div class="info-list">
+        <div class="info-item">
+          <div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3.5 6 8.5 7 8.5-7"></path></svg></div>
+          <div><h4>Email</h4><p>hello@zarvio.com</p></div>
+        </div>
+        <div class="info-item">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1.1-.3 1.2.4 2.5.6 3.8.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.6.6 3.8.1.4 0 .8-.3 1.1L6.6 10.8z"></path></svg></div>
+          <div><h4>Phone</h4><p>+1 (415) 555-0148</p></div>
+        </div>
+        <div class="info-item">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"></path><circle cx="12" cy="9" r="2.4"></circle></svg></div>
+          <div><h4>Address</h4><p>500 Market Street, Suite 250<br>San Francisco, CA 94105</p></div>
+        </div>
+        <div class="info-item">
+          <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg></div>
+          <div><h4>Business Hours</h4><p>Mon–Fri, 9:00 AM – 6:00 PM PST</p></div>
+        </div>
+      </div>
+
+      <div class="social-row">
+        <a href="#"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"></rect><path d="M8 11v5M8 8v.01M12 16v-5M12 11c0-1.5 1-2 2-2s2 .8 2 2.3V16"></path></svg></a>
+        <a href="#"><svg viewBox="0 0 24 24"><path d="M21 5.5c-.7.3-1.4.5-2.2.6.8-.5 1.4-1.2 1.6-2.1-.7.4-1.6.8-2.4 1a3.8 3.8 0 0 0-6.5 3.4A10.7 10.7 0 0 1 3.9 4.6a3.8 3.8 0 0 0 1.2 5A3.7 3.7 0 0 1 3.4 9v.05a3.8 3.8 0 0 0 3 3.7c-.5.1-1.1.2-1.6.1a3.8 3.8 0 0 0 3.5 2.6A7.6 7.6 0 0 1 3 17a10.7 10.7 0 0 0 5.8 1.7c7 0 10.8-5.8 10.8-10.8v-.5c.7-.5 1.3-1.2 1.8-1.9z"></path></svg></a>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="field"><label>Name</label><input type="text" placeholder="Jordan Smith"></div>
+      <div class="field"><label>Email</label><input type="email" placeholder="jordan@acmecorp.com"></div>
+      <div class="field"><label>Subject</label><input type="text" placeholder="How can we help?"></div>
+      <div class="field"><label>Message</label><textarea placeholder="Write your message..."></textarea></div>
+      <button class="btn btn-primary" style="width:100%; justify-content:center;" type="button">Send Message</button>
+    </div>
+  </div>
+
+  <footer class="site-foot">
+    <div class="foot-grid">
+      <div><div class="foot-brand">Zarvio</div><p class="foot-tagline">Smarter Business. Stronger Future.</p></div>
+      <div><h4>Quick Links</h4><a data-target="home">Home</a><a data-target="services">Services</a><a data-target="portfolio">Portfolio</a><a data-target="about">About</a><a data-target="book-a-demo">Book a Demo</a></div>
+      <div><h4>Products</h4><a data-target="products">ERPNext</a><a data-target="products">HRMS</a><a data-target="products">CRM</a><a data-target="products">Custom Frappe</a></div>
+      <div><h4>Contact</h4><p>hello@zarvio.com</p><p>+1 (415) 555-0148</p></div>
+    </div>
+    <div class="foot-bottom"><span>© 2026 Zarvio. All rights reserved.</span><span>Placeholder contact info — see 05-content-needed.md</span></div>
+  </footer>
+</section>
+
+<script>
+(function(){
+  var heroZoom = (function(){
+    // Logo stays fixed behind the scrolling page and slowly zooms in as you scroll.
+    // Tweak maxScale to make the zoom more/less dramatic.
+    var logo = document.querySelector('.hero-logo');
+    if(!logo) return function(){};
+    logo.addEventListener('animationend', function(){ logo.classList.remove('hero-anim-in'); }, {once:true});
+    var maxScale = 0.18;
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduceMotion) logo.classList.remove('hero-anim-in');
+    var ticking = false;
+    function apply(){
+      var vh = window.innerHeight || 1;
+      var progress = Math.min(Math.max(window.scrollY / vh, 0), 1);
+      logo.style.transform = 'translate(-50%,-50%) scale(' + (1 + progress * maxScale) + ')';
+      ticking = false;
+    }
+    function onScroll(){
+      if(ticking) return;
+      ticking = true;
+      requestAnimationFrame(apply);
+    }
+    if(!reduceMotion){
+      window.addEventListener('scroll', onScroll, {passive:true});
+      apply();
+    }
+    return apply;
+  })();
+
+  var groupTint = (function(){
+    // The single .page-scroll wrapper holds every home-page section. As you scroll
+    // through the first section (one screen height), its tint fades in from clear
+    // to 20% white and its blur ramps up to the same 26px used by cards — both
+    // reach max together and then hold fixed for the rest of the page.
+    var group = document.querySelector('#page-home .page-scroll');
+    if(!group) return function(){};
+    var minOpacity = 0, maxOpacity = 0.20, maxBlur = 10, rangeVh = 1;
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var ticking = false;
+    function apply(){
+      var vh = window.innerHeight || 1;
+      var progress = Math.min(Math.max(window.scrollY / (vh * rangeVh), 0), 1);
+      var opacity = minOpacity + progress * (maxOpacity - minOpacity);
+      var blur = progress * maxBlur;
+      group.style.backgroundColor = 'rgba(255,255,255,' + opacity.toFixed(3) + ')';
+      group.style.backdropFilter = 'blur(' + blur.toFixed(1) + 'px) saturate(180%)';
+      group.style.webkitBackdropFilter = group.style.backdropFilter;
+      ticking = false;
+    }
+    function onScroll(){
+      if(ticking) return;
+      ticking = true;
+      requestAnimationFrame(apply);
+    }
+    if(!reduceMotion){
+      window.addEventListener('scroll', onScroll, {passive:true});
+      apply();
+    } else {
+      group.style.backgroundColor = 'rgba(255,255,255,' + maxOpacity + ')';
+      group.style.backdropFilter = 'blur(' + maxBlur + 'px) saturate(180%)';
+      group.style.webkitBackdropFilter = group.style.backdropFilter;
+    }
+    return apply;
+  })();
+
+  document.querySelectorAll('a[data-target]').forEach(function(a){
+    a.addEventListener('click', function(){ setTimeout(heroZoom, 0); setTimeout(groupTint, 0); });
+  });
+
+  document.querySelectorAll('.site-nav').forEach(function(nav){
+    var links = nav.querySelector('.nav-links');
+    if(!links) return;
+    var toggle = document.createElement('button');
+    toggle.className = 'nav-toggle';
+    toggle.type = 'button';
+    toggle.setAttribute('aria-label', 'Menu');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.innerHTML = '<span></span>';
+    nav.insertBefore(toggle, links);
+    toggle.addEventListener('click', function(){
+      var open = nav.classList.toggle('nav-open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    links.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', function(){
+        nav.classList.remove('nav-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  });
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var revealSelector = '.section-head, .card, .value-item, .portfolio-card, .case, .team-card, .stat, .detail, .info-item, .cta-banner, .form-card';
+  var io = reduceMotion ? null : new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('in-view');
+        io.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.15, rootMargin:'0px 0px -40px 0px'});
+
+  function setupReveals(pageEl){
+    if(reduceMotion) return;
+    var counters = new Map();
+    pageEl.querySelectorAll(revealSelector).forEach(function(el){
+      if(el.dataset.revealSetup) return;
+      el.dataset.revealSetup = '1';
+      var parent = el.parentElement;
+      var idx = counters.get(parent) || 0;
+      counters.set(parent, idx + 1);
+      el.style.setProperty('--reveal-i', idx);
+      el.classList.add('reveal-init');
+      io.observe(el);
+    });
+  }
+
+  document.querySelectorAll('.page').forEach(function(p){
+    if(!p.hidden) setupReveals(p);
+  });
+
+  document.querySelectorAll('a[data-target]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      var target = a.getAttribute('data-target');
+      var targetPage = document.getElementById('page-' + target);
+      var current = document.querySelector('.page:not([hidden])');
+      var siteBg = document.querySelector('.site-bg');
+      if(siteBg) siteBg.classList.toggle('home', target === 'home');
+      if(!targetPage || current === targetPage) return;
+
+      if(reduceMotion){
+        document.querySelectorAll('.page').forEach(function(p){ p.hidden = (p !== targetPage); });
+        window.scrollTo(0, 0);
+        setupReveals(targetPage);
+        return;
+      }
+
+      current.classList.add('page-leave');
+      setTimeout(function(){
+        document.querySelectorAll('.page').forEach(function(p){ p.hidden = (p !== targetPage); });
+        current.classList.remove('page-leave');
+        window.scrollTo(0, 0);
+        targetPage.classList.add('page-enter');
+        requestAnimationFrame(function(){
+          targetPage.classList.add('page-enter-active');
+        });
+        setTimeout(function(){
+          targetPage.classList.remove('page-enter', 'page-enter-active');
+        }, 400);
+        setupReveals(targetPage);
+      }, 200);
+    });
+  });
+})();
+</script>
+</body>
+</html>

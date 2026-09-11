@@ -1,0 +1,436 @@
+<title>Zarvio — Homepage Design Mockup</title>
+<style>
+  :root{
+    --bg: #ffffff;
+    --surface: #F2F5FA;
+    --surface-2: #E7ECF5;
+    --border: #DCE3EE;
+    --text: #0B1730;
+    --text-muted: #56637C;
+    --text-faint: #8493AB;
+    --navy: #03102B;
+    --navy-2: #0E2B65;
+    --blue: #2F60F8;
+    --purple: #7339FE;
+    --gradient: linear-gradient(135deg, #2F60F8 0%, #7339FE 100%);
+    --on-gradient: #ffffff;
+    --radius: 10px;
+    --shadow: 0 1px 2px rgba(11,23,48,.04), 0 8px 24px -12px rgba(11,23,48,.12);
+    --font-display: 'Sora', 'Segoe UI Semibold', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: ui-monospace, 'Cascadia Code', 'SFMono-Regular', Menlo, Consolas, monospace;
+  }
+  :root[data-theme="dark"]{
+    --bg: #050D1F;
+    --surface: #0A1830;
+    --surface-2: #101F3D;
+    --border: #1C2E52;
+    --text: #E7ECF7;
+    --text-muted: #9AA9C4;
+    --text-faint: #6C7A98;
+    --on-gradient: #ffffff;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px -12px rgba(0,0,0,.55);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg: #050D1F;
+      --surface: #0A1830;
+      --surface-2: #101F3D;
+      --border: #1C2E52;
+      --text: #E7ECF7;
+      --text-muted: #9AA9C4;
+      --text-faint: #6C7A98;
+      --on-gradient: #ffffff;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px -12px rgba(0,0,0,.55);
+    }
+  }
+
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3{ font-family: var(--font-display); color: var(--text); text-wrap: balance; margin: 0; }
+  p{ margin: 0; }
+  img{ max-width:100%; display:block; }
+  .wrap{ max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+  .mono{ font-family: var(--font-mono); }
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  /* ---------- Intro banner ---------- */
+  .notice{
+    background: var(--navy);
+    color: #C9D4EA;
+    font-size: 13px;
+    text-align: center;
+    padding: 10px 16px;
+  }
+  .notice strong{ color:#fff; }
+
+  header.doc-head{
+    padding: 56px 0 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .doc-head h1{ font-size: clamp(28px, 4vw, 38px); }
+  .doc-head p{ color: var(--text-muted); max-width: 640px; margin-top: 10px; font-size: 15.5px; }
+
+  /* ---------- Token strip ---------- */
+  section.tokens{ padding: 48px 0; border-bottom: 1px solid var(--border); }
+  .tokens h2.section-title{ font-size: 13px; }
+  .token-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 32px;
+    margin-top: 28px;
+  }
+  .swatches{ display:flex; flex-direction:column; gap:10px; }
+  .swatch-row{ display:flex; align-items:center; gap:12px; }
+  .swatch{ width:36px; height:36px; border-radius: 8px; border: 1px solid var(--border); flex-shrink:0; }
+  .swatch-label{ font-size: 13.5px; }
+  .swatch-hex{ font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
+
+  .type-specimen div{ margin-bottom: 14px; }
+  .spec-display{ font-family: var(--font-display); font-size: 26px; font-weight: 700; }
+  .spec-body{ font-size: 16px; color: var(--text-muted); max-width: 34ch; }
+  .spec-mono{ font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); }
+
+  .btn-row{ display:flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+  .btn{
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 14.5px;
+    padding: 12px 22px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: default;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary{ background: var(--gradient); color: var(--on-gradient); }
+  .btn-secondary{ background: transparent; color: var(--text); border-color: var(--border); }
+
+  /* ---------- Mockup frame ---------- */
+  .frame-wrap{ padding: 48px 0 80px; }
+  .frame-label{ margin-bottom: 14px; }
+  .browser-frame{
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    background: var(--bg);
+  }
+  .browser-bar{
+    display:flex; align-items:center; gap:8px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .dot{ width:9px; height:9px; border-radius:50%; background: var(--border); }
+  .browser-url{
+    margin-left: 10px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-faint);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+  }
+
+  .tag{
+    display:inline-block;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 5px;
+    margin-bottom: 16px;
+  }
+
+  /* nav */
+  .site-nav{
+    display:flex; align-items:center; justify-content: space-between;
+    padding: 18px 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand{ display:flex; align-items:center; gap:10px; font-family: var(--font-display); font-weight:700; font-size: 17px; }
+  .brand .mark{
+    width: 26px; height: 26px; border-radius: 6px;
+    background: var(--gradient);
+  }
+  .nav-links{ display:flex; align-items:center; gap: 28px; }
+  .nav-links a{ font-size: 14px; color: var(--text-muted); text-decoration:none; }
+  .nav-cta{ font-size: 13.5px; padding: 9px 18px; }
+
+  /* hero */
+  .hero{ padding: 76px 32px; text-align:center; background: var(--surface); }
+  .hero .eyebrow{ justify-content:center; display:flex; margin-bottom: 16px; }
+  .hero h1{ font-size: clamp(30px, 4.6vw, 44px); max-width: 780px; margin: 0 auto; }
+  .hero .accent{
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero p.sub{ margin: 18px auto 0; max-width: 560px; color: var(--text-muted); font-size: 16.5px; }
+  .hero .btn-row{ justify-content:center; margin-top: 30px; }
+
+  /* trust bar */
+  .trust{ padding: 28px 32px; display:flex; align-items:center; justify-content:center; gap: 36px; flex-wrap: wrap; border-bottom: 1px solid var(--border); }
+  .trust span{ font-family: var(--font-mono); font-size: 12.5px; color: var(--text-faint); letter-spacing:.04em; }
+
+  /* generic section */
+  .section{ padding: 64px 32px; }
+  .section.alt{ background: var(--surface); }
+  .section-head{ max-width: 620px; margin: 0 auto 36px; text-align:center; }
+  .section-head h2{ font-size: 28px; }
+  .section-head p{ color: var(--text-muted); margin-top: 10px; font-size: 15.5px; }
+
+  .card-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap: 18px; max-width: 1040px; margin: 0 auto; }
+  .card{
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .card .icon{ width:34px; height:34px; border-radius:8px; background: var(--surface-2); display:flex; align-items:center; justify-content:center; font-family: var(--font-mono); font-size:13px; color: var(--blue); }
+  .card h3{ font-size: 16.5px; }
+  .card p{ font-size: 13.8px; color: var(--text-muted); }
+  .card .link{ font-size: 13px; color: var(--blue); margin-top: auto; font-weight:600; }
+
+  /* why zarvio */
+  .value-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 24px; max-width: 1040px; margin: 0 auto; }
+  .value-item{ display:flex; gap:14px; }
+  .value-item .num{ font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); padding-top: 3px; }
+  .value-item h3{ font-size: 15.5px; margin-bottom: 4px; }
+  .value-item p{ font-size: 13.6px; color: var(--text-muted); }
+
+  /* portfolio teaser */
+  .portfolio-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 18px; max-width: 1040px; margin: 0 auto; }
+  .portfolio-card{
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 26px 20px;
+    text-align:center;
+    color: var(--text-faint);
+    background: var(--bg);
+  }
+  .portfolio-card .ph-icon{ font-family: var(--font-mono); font-size: 20px; margin-bottom: 10px; }
+  .portfolio-card p{ font-size: 12.8px; }
+
+  /* CTA banner */
+  .cta-banner{
+    margin: 0 32px;
+    border-radius: 16px;
+    background: var(--navy);
+    padding: 52px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-banner::before{
+    content:"";
+    position:absolute; inset:0;
+    background: var(--gradient);
+    opacity: .16;
+  }
+  .cta-banner h2{ color:#fff; font-size: 26px; position:relative; }
+  .cta-banner p{ color: #B9C4DE; margin-top: 10px; position:relative; font-size: 14.5px; }
+  .cta-banner .btn-row{ justify-content:center; margin-top: 24px; position:relative; }
+
+  /* footer */
+  footer.site-foot{ padding: 44px 32px 30px; background: var(--surface); border-top: 1px solid var(--border); }
+  .foot-grid{ display:grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 28px; max-width: 1040px; margin: 0 auto; }
+  .foot-grid h4{ font-size: 12.5px; margin-bottom: 12px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing:.06em; color: var(--text-faint); }
+  .foot-grid a, .foot-grid p{ display:block; font-size: 13.5px; color: var(--text-muted); text-decoration:none; margin-bottom: 8px; }
+  .foot-brand{ font-family: var(--font-display); font-weight:700; font-size:16px; margin-bottom:8px; }
+  .foot-tagline{ font-size: 13px; color: var(--text-faint); max-width: 26ch; }
+  .foot-bottom{ max-width:1040px; margin: 28px auto 0; padding-top:18px; border-top:1px solid var(--border); font-size:12.5px; color: var(--text-faint); }
+
+  @media (max-width: 720px){
+    .foot-grid{ grid-template-columns: 1fr 1fr; }
+    .nav-links a:not(.nav-cta){ display:none; }
+    .trust{ gap: 18px; }
+  }
+</style>
+
+<div class="notice"><strong>Design preview</strong> — layout, color, and type direction for review. Copy shown is first-draft, not final.</div>
+
+<header class="doc-head">
+  <div class="wrap">
+    <h1>Zarvio — Homepage Mockup</h1>
+    <p>A working preview of the homepage using colors and type pulled from your logo, styled for a corporate, enterprise-facing audience. Scroll past the token reference below to see the page itself inside a browser frame.</p>
+  </div>
+</header>
+
+<section class="tokens">
+  <div class="wrap">
+    <div class="eyebrow">Design tokens</div>
+    <div class="token-grid">
+      <div class="swatches">
+        <div class="swatch-row"><div class="swatch" style="background:#03102B"></div><div><div class="swatch-label">Navy</div><div class="swatch-hex">#03102B</div></div></div>
+        <div class="swatch-row"><div class="swatch" style="background:#0E2B65"></div><div><div class="swatch-label">Deep blue</div><div class="swatch-hex">#0E2B65</div></div></div>
+        <div class="swatch-row"><div class="swatch" style="background:#2F60F8"></div><div><div class="swatch-label">Accent blue</div><div class="swatch-hex">#2F60F8</div></div></div>
+        <div class="swatch-row"><div class="swatch" style="background:#7339FE"></div><div><div class="swatch-label">Accent purple</div><div class="swatch-hex">#7339FE</div></div></div>
+        <div class="swatch-row"><div class="swatch" style="background:linear-gradient(135deg,#2F60F8,#7339FE)"></div><div><div class="swatch-label">Brand gradient</div><div class="swatch-hex">135deg</div></div></div>
+      </div>
+      <div class="type-specimen">
+        <div class="spec-display">Smarter Business.</div>
+        <div class="spec-body">Body copy in Inter — used for paragraphs, card descriptions, and form labels throughout the site.</div>
+        <div class="spec-mono">ERPNEXT · HRMS · CRM — mono for labels &amp; data</div>
+      </div>
+      <div>
+        <div class="btn-row">
+          <span class="btn btn-primary">Book a Demo</span>
+          <span class="btn btn-secondary">Explore Products</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="frame-wrap">
+  <div class="wrap">
+    <div class="frame-label eyebrow">Homepage preview</div>
+    <div class="browser-frame">
+      <div class="browser-bar">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        <div class="browser-url">zarvio.com</div>
+      </div>
+
+      <nav class="site-nav">
+        <div class="brand"><span class="mark"></span>Zarvio</div>
+        <div class="nav-links">
+          <a href="#">Home</a>
+          <a href="#">Products</a>
+          <a href="#">Services</a>
+          <a href="#">Portfolio</a>
+          <a href="#">Contact</a>
+          <span class="btn btn-primary nav-cta">Book a Demo</span>
+        </div>
+      </nav>
+
+      <section class="hero">
+        <span class="tag">Hero</span><br/>
+        <div class="eyebrow">Frappe · ERPNext · HRMS · CRM specialists</div>
+        <h1>Smarter Business. <span class="accent">Stronger Future.</span></h1>
+        <p class="sub">Zarvio helps enterprises run better with ERPNext, HRMS, and CRM solutions — plus custom Frappe development and business consulting.</p>
+        <div class="btn-row">
+          <span class="btn btn-primary">Book a Demo</span>
+          <span class="btn btn-secondary">Explore Products</span>
+        </div>
+      </section>
+
+      <div class="trust">
+        <span class="tag" style="margin:0;">Trust bar</span>
+        <span>BUILT ON FRAPPE</span>
+        <span>ERPNEXT CERTIFIED</span>
+        <span>END-TO-END DELIVERY</span>
+        <span>ENTERPRISE SUPPORT</span>
+      </div>
+
+      <section class="section">
+        <span class="tag">Products overview</span>
+        <div class="section-head">
+          <h2>Enterprise solutions, built on Frappe</h2>
+          <p>Packaged ERP-ecosystem products, tailored to how your business runs.</p>
+        </div>
+        <div class="card-grid">
+          <div class="card"><div class="icon">ERP</div><h3>ERPNext Implementation</h3><p>Full ERP setup, module configuration, and migration from legacy systems.</p><span class="link">Learn more →</span></div>
+          <div class="card"><div class="icon">HR</div><h3>HRMS</h3><p>Attendance, payroll, leave management, and employee self-service.</p><span class="link">Learn more →</span></div>
+          <div class="card"><div class="icon">CRM</div><h3>CRM</h3><p>Lead tracking, sales pipeline, and customer support workflows.</p><span class="link">Learn more →</span></div>
+          <div class="card"><div class="icon">{ }</div><h3>Custom Frappe Apps</h3><p>Bespoke DocTypes and forms for workflows off-the-shelf ERP doesn't cover.</p><span class="link">Learn more →</span></div>
+        </div>
+      </section>
+
+      <section class="section alt">
+        <span class="tag">Services overview</span>
+        <div class="section-head">
+          <h2>Beyond off-the-shelf software</h2>
+          <p>We design, build, and support solutions around your business.</p>
+        </div>
+        <div class="card-grid">
+          <div class="card"><div class="icon">&lt;/&gt;</div><h3>Custom Website Development</h3><p>Marketing sites, portals, and internal tools.</p><span class="link">Learn more →</span></div>
+          <div class="card"><div class="icon">⚙</div><h3>Custom Software Development</h3><p>Bespoke applications outside the Frappe ecosystem when needed.</p><span class="link">Learn more →</span></div>
+          <div class="card"><div class="icon">◇</div><h3>Business Consulting</h3><p>Process audits, transformation roadmaps, and ERP readiness reviews.</p><span class="link">Learn more →</span></div>
+          <div class="card"><div class="icon">↻</div><h3>Implementation &amp; Support</h3><p>Ongoing maintenance, upgrades, and support contracts post-launch.</p><span class="link">Learn more →</span></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <span class="tag">Why Zarvio</span>
+        <div class="section-head">
+          <h2>Why teams choose Zarvio</h2>
+        </div>
+        <div class="value-grid">
+          <div class="value-item"><span class="num">01</span><div><h3>Frappe/ERPNext specialists</h3><p>Deep, focused expertise instead of generalist coverage.</p></div></div>
+          <div class="value-item"><span class="num">02</span><div><h3>End-to-end delivery</h3><p>From consulting through implementation and ongoing support.</p></div></div>
+          <div class="value-item"><span class="num">03</span><div><h3>Built around your workflow</h3><p>Solutions shaped to your process, not the other way around.</p></div></div>
+          <div class="value-item"><span class="num">04</span><div><h3>Enterprise-grade reliability</h3><p>Security and stability suited to business-critical systems.</p></div></div>
+        </div>
+      </section>
+
+      <section class="section alt">
+        <span class="tag">Portfolio teaser</span>
+        <div class="section-head">
+          <h2>Our work</h2>
+          <p>Case studies are on the way — here's where they'll live.</p>
+        </div>
+        <div class="portfolio-grid">
+          <div class="portfolio-card"><div class="ph-icon">◻</div><p>Case study coming soon</p></div>
+          <div class="portfolio-card"><div class="ph-icon">◻</div><p>Case study coming soon</p></div>
+          <div class="portfolio-card"><div class="ph-icon">◻</div><p>Case study coming soon</p></div>
+        </div>
+      </section>
+
+      <section class="section" style="padding-top:16px;">
+        <span class="tag">CTA banner</span>
+        <div class="cta-banner">
+          <h2>Ready to modernize your operations?</h2>
+          <p>Talk to us about ERPNext, HRMS, CRM, or a custom build.</p>
+          <div class="btn-row"><span class="btn btn-primary">Book a Demo</span></div>
+        </div>
+      </section>
+
+      <footer class="site-foot">
+        <span class="tag">Footer</span>
+        <div class="foot-grid">
+          <div>
+            <div class="foot-brand">Zarvio</div>
+            <p class="foot-tagline">Smarter Business. Stronger Future.</p>
+          </div>
+          <div>
+            <h4>Quick Links</h4>
+            <a href="#">Home</a><a href="#">Services</a><a href="#">Portfolio</a><a href="#">Book a Demo</a>
+          </div>
+          <div>
+            <h4>Products</h4>
+            <a href="#">ERPNext</a><a href="#">HRMS</a><a href="#">CRM</a><a href="#">Custom Frappe</a>
+          </div>
+          <div>
+            <h4>Contact</h4>
+            <p>hello@zarvio.com</p>
+            <p>+00 000 000 0000</p>
+          </div>
+        </div>
+        <div class="foot-bottom">© 2026 Zarvio. All rights reserved.</div>
+      </footer>
+    </div>
+  </div>
+</div>
