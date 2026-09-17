@@ -1041,39 +1041,61 @@
     if(!p.hidden) setupReveals(p);
   });
 
+  function goToPage(target, pushHistory){
+    var targetPage = document.getElementById('page-' + target);
+    var current = document.querySelector('.page:not([hidden])');
+    var siteBg = document.querySelector('.site-bg');
+    if(siteBg) siteBg.classList.toggle('home', target === 'home');
+    if(!targetPage || current === targetPage) return;
+
+    if(pushHistory){
+      history.pushState({page: target}, '', '#' + target);
+    }
+
+    if(reduceMotion){
+      document.querySelectorAll('.page').forEach(function(p){ p.hidden = (p !== targetPage); });
+      window.scrollTo(0, 0);
+      setupReveals(targetPage);
+      return;
+    }
+
+    current.classList.add('page-leave');
+    setTimeout(function(){
+      document.querySelectorAll('.page').forEach(function(p){ p.hidden = (p !== targetPage); });
+      current.classList.remove('page-leave');
+      window.scrollTo(0, 0);
+      targetPage.classList.add('page-enter');
+      requestAnimationFrame(function(){
+        targetPage.classList.add('page-enter-active');
+      });
+      setTimeout(function(){
+        targetPage.classList.remove('page-enter', 'page-enter-active');
+      }, 400);
+      setupReveals(targetPage);
+    }, 200);
+  }
+
   document.querySelectorAll('a[data-target]').forEach(function(a){
     a.addEventListener('click', function(e){
       e.preventDefault();
-      var target = a.getAttribute('data-target');
-      var targetPage = document.getElementById('page-' + target);
-      var current = document.querySelector('.page:not([hidden])');
-      var siteBg = document.querySelector('.site-bg');
-      if(siteBg) siteBg.classList.toggle('home', target === 'home');
-      if(!targetPage || current === targetPage) return;
-
-      if(reduceMotion){
-        document.querySelectorAll('.page').forEach(function(p){ p.hidden = (p !== targetPage); });
-        window.scrollTo(0, 0);
-        setupReveals(targetPage);
-        return;
-      }
-
-      current.classList.add('page-leave');
-      setTimeout(function(){
-        document.querySelectorAll('.page').forEach(function(p){ p.hidden = (p !== targetPage); });
-        current.classList.remove('page-leave');
-        window.scrollTo(0, 0);
-        targetPage.classList.add('page-enter');
-        requestAnimationFrame(function(){
-          targetPage.classList.add('page-enter-active');
-        });
-        setTimeout(function(){
-          targetPage.classList.remove('page-enter', 'page-enter-active');
-        }, 400);
-        setupReveals(targetPage);
-      }, 200);
+      goToPage(a.getAttribute('data-target'), true);
     });
   });
+
+  var validTargets = ['home', 'products', 'services', 'portfolio', 'about', 'book-a-demo', 'contact'];
+  window.addEventListener('popstate', function(e){
+    var target = (e.state && e.state.page) || location.hash.replace('#', '') || 'home';
+    if(validTargets.indexOf(target) === -1) target = 'home';
+    goToPage(target, false);
+  });
+
+  var initialTarget = location.hash.replace('#', '');
+  if(validTargets.indexOf(initialTarget) !== -1 && initialTarget !== 'home'){
+    history.replaceState({page: initialTarget}, '', '#' + initialTarget);
+    goToPage(initialTarget, false);
+  } else {
+    history.replaceState({page: 'home'}, '', location.pathname + location.search);
+  }
 })();
 </script>
 </body>
